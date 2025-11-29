@@ -1,25 +1,45 @@
-
-# Projeto notas Rápidas com Redis
-## intalações necessárias:
-
-#### 1. No terminal do VsCode
-    
-        pip install redis
-   
-#### 2. No terminal do ubuntu:
-
-    - para iniciar o server: 
-        sudo service redis-server start
-    
-
-    - para conectar o servidor do redis:
-        redis-cli
-    
-
-    - para testar a conexão
-        ping
-
-    -> Ele deve responder PONG
+# 📝 Notas Rápidas com Redis
+Aprendendo Redis: Projeto prático de NoSQL para Banco de Dados II
 
 
-### apos isso pode rodar a aplicação 
+## ⚡ Instalar dependências
+
+### 1. Instalar a biblioteca Redis (VSCode)
+No terminal do VSCode:
+```bash
+pip install redis
+````
+
+### 2. Iniciar o servidor Redis (Ubuntu)
+
+No terminal:
+
+```bash
+sudo service redis-server start
+```
+
+### 3. Conectar ao servidor Redis
+
+```bash
+redis-cli
+```
+
+### 4. Testar a conexão
+
+```bash
+ping
+```
+
+**Saída esperada:**
+
+```bash
+PONG
+```
+
+### 5. Rodar a aplicação
+
+No terminal do VSCode:
+
+```bash
+python main.py
+```
