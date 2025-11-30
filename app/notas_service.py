@@ -1,4 +1,4 @@
-from .conexao import rds
+from app.conexao import rds
 
 def adicionar_nota(texto):
     ids = rds.keys("nota:*")

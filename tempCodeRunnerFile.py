@@ -1,6 +1,5 @@
 from app import notas_service as service
 
-
 def main():
 
     realizar_loop = True
