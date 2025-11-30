@@ -1,36 +1,35 @@
-from conexao import rds
+from app.conexao import rds
 
-
-def adicionar_nota(texto: str):
-    novo_id = rds.incr("contador")        # gera ID automático
-    chave = f"nota:{novo_id}"
-    rds.set(chave, texto)
-    return novo_id
+def adicionar_nota(texto):
+    novo_id = rds.incr('contador')
+    chave_nota = f"nota:{novo_id}"
+    rds.set(chave_nota, texto)
 
 
 def listar_tudo():
-    notas = []
-    ids = sorted(rds.keys("nota:*"), key=lambda x: int(x.split(":")[1]))
+    ids = rds.keys("nota:*")
+    for id in ids:
+        valor = rds.get(id)
+        print(id, valor)
 
-    for chave in ids:
-        texto = rds.get(chave)
-        id_nota = chave.split(":")[1]
-        notas.append((id_nota, texto))
-
-    return notas
-
-
-def remover_nota(id_nota: str):
-    chave = f"nota:{id_nota}"
-    if rds.exists(chave):
-        rds.delete(chave)
-        return True
-    return False
+def remover_nota():
+    listar_tudo()
+    remover_id = int(input("Digite o número da nota que deseja remover: "))
+    rds.delete(f"nota:{remover_id}")
+    print("Nota deletada")
 
 
-def atualizar_nota(id_nota: str, novo_texto: str):
-    chave = f"nota:{id_nota}"
-    if rds.exists(chave):
-        rds.set(chave, novo_texto)
-        return True
-    return False
+def atualizar_nota():
+    listar_tudo()
+    id_nota = int(input("Digite o número da nota que deseja atulizar: "))
+    novo_texto = input("Digite o texto para atualizar a nota: ")
+    rds.set(f"nota:{id_nota}", novo_texto)
+
+    print("Nota atualizada")
+
+
+def buscar_nota():
+    ...
+
+
+
