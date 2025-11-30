@@ -1,4 +1,4 @@
-from app.conexao import rds
+from conexao import rds
 
 def adicionar_nota(texto):
     novo_id = rds.incr('contador')
