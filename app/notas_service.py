@@ -39,9 +39,10 @@ def atualizar_nota():
     rds.set(f"nota:{id_nota}", novo_texto)
     print("Nota atualizada")
 
-
-def buscar_nota():
-    ...
-
-
-
+def apagar_tudo():
+    resposta = input("Tem certeza que deseja apagar TODAS as notas?")
+    if resposta in 'sS':
+        rds.flushdb()
+        print("Todas as notas foram apagadas")
+    else:
+        print("Processo cancelado")
