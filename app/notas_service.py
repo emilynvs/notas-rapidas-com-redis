@@ -10,15 +10,23 @@ def listar_tudo():
     notas = []
 
     if not ids:
-        return []   
+        return []
 
-    for id_bytes in ids:
-        chave = id_bytes.decode("utf-8")  
-        valor = rds.get(chave).decode("utf-8")
+    for chave in ids:
+        valor = rds.get(chave)
+
+        if isinstance(valor, bytes):
+            valor = valor.decode("utf-8")
+
+        if isinstance(chave, bytes):
+            chave = chave.decode("utf-8")
+
         id_nota = chave.split(":")[1]
+
         notas.append((id_nota, valor))
 
     return notas
+
 
 
 def remover_nota(id_nota):
