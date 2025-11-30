@@ -14,7 +14,8 @@ def main():
         print("2 - Listar tudo")
         print("3 - Remover nota")        
         print("4 - Atualizar nota")
-        print("5 - Encerrar")
+        print("5 - Remover tudo")
+        print("6 - Encerrar")
         opcao = int(input("Digite uma opção: "))
 
         if opcao == 1:
@@ -27,6 +28,8 @@ def main():
         elif opcao == 4:
             service.atualizar_nota()
         elif opcao == 5:
+            service.apagar_tudo()
+        elif opcao == 6:
             realizar_loop = False
         else:
             print("Escolha inválida")
