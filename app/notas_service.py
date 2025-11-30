@@ -5,9 +5,7 @@ def adicionar_nota(texto):
     chave_nota = f"nota:{novo_id}"
     rds.set(chave_nota, texto)
 
-
 def listar_tudo():
-   def listar_tudo():
     ids = rds.keys("nota:*")
     notas = []
 
