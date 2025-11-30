@@ -7,37 +7,37 @@ def adicionar_nota(texto):
 
 
 def listar_tudo():
+   def listar_tudo():
     ids = rds.keys("nota:*")
+    notas = []
+
     if not ids:
-        print("Ainda não há notas adicionadas")
-        return
-    for id in ids:
-        valor = rds.get(id)
-        print(id, valor)
+        return []   
 
-def remover_nota():
-    listar_tudo()
-    remover_id = int(input("Digite o número da nota que deseja remover: "))
-    chave = f"nota{remover_id}"
+    for id_bytes in ids:
+        chave = id_bytes.decode("utf-8")  
+        valor = rds.get(chave).decode("utf-8")
+        id_nota = chave.split(":")[1]
+        notas.append((id_nota, valor))
+
+    return notas
+
+
+def remover_nota(id_nota):
+    chave = f"nota:{id_nota}"
     if not rds.exists(chave):
-        print("Não existe essa nota")
-        return
+        return False
     rds.delete(chave)
-    print("Nota deletada")
+    return True
 
 
-def atualizar_nota():
-    listar_tudo()
-    id_nota = int(input("Digite o número da nota que deseja atulizar: "))
-    chave = f"nota{id_nota}"
-    
+def atualizar_nota(id_nota, novo_texto):
+    chave = f"nota:{id_nota}"
     if not rds.exists(chave):
-        print("Não existe essa nota")
-        return
-    
-    novo_texto = input("Digite o texto para atualizar a nota: ")
-    rds.set(f"nota:{id_nota}", novo_texto)
-    print("Nota atualizada")
+        return False
+    rds.set(chave, novo_texto)
+    return True
+
 
 def apagar_tudo():
     resposta = input("Tem certeza que deseja apagar TODAS as notas?")
