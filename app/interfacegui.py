@@ -1,5 +1,6 @@
 import tkinter as tk
-from notas_service import adicionar_nota, listar_tudo, remover_nota, atualizar_nota
+import notas_service as service
+from tkinter import messagebox
 
 # ---------- CORES ----------
 cor_titulo = "#FF4438"
@@ -7,6 +8,26 @@ cor_fundo = "#091A23"
 cor_botao = "#351D22"
 cor_botao_hover = "#8A221C"
 cor_text_botao = "white"
+
+def janela_detalhes(nota):
+    id_nota, texto, criado, atualizado = nota
+
+    win = tk.Toplevel(janela)
+    win.title("Detalhes da Nota")
+    win.geometry("400x250")
+    win.config(bg=cor_fundo)
+
+    tk.Label(win, text=f"ID: {id_nota}", bg=cor_fundo, fg="white",
+             font=("Arial", 12)).pack(pady=5)
+
+    tk.Label(win, text=f"Texto: {texto}", bg=cor_fundo, fg="white",
+             font=("Arial", 12), wraplength=350).pack(pady=5)
+
+    tk.Label(win, text=f"Criado em: {criado}", bg=cor_fundo, fg="white",
+             font=("Arial", 12)).pack(pady=5)
+
+    tk.Label(win, text=f"Atualizado em: {atualizado}", bg=cor_fundo, fg="white",
+             font=("Arial", 12)).pack(pady=5)
 
 
 
@@ -41,7 +62,7 @@ def janela_adicionar():
     def salvar():
         texto = entrada.get().strip()
         if texto:
-            adicionar_nota(texto)
+            service.adicionar_nota(texto)
             win.destroy()
 
     btn = tk.Button(win, text="Adicionar", width=15, height=1, command=salvar)
@@ -61,14 +82,28 @@ def janela_listar():
     lista = tk.Listbox(win, width=40, height=12)
     lista.pack(pady=5)
 
-    notas = listar_tudo()
+    notas = service.listar_tudo()
+    favoritas = service.listar_favoritas()
+
+    fav_ids = {f[0] for f in favoritas}
 
     if not notas:
         lista.insert(tk.END, "Nenhuma nota encontrada.")
     else:
-        for id_nota, texto in notas:
-            lista.insert(tk.END, f"{id_nota} - {texto}")
+        for id_nota, texto, criado, atualizado in notas:
+            estrela = "★ " if id_nota in fav_ids else ""
+            lista.insert(
+                tk.END,
+                f"{estrela}{id_nota} | {texto} | Criado: {criado} | Atualizado: {atualizado}"
+            )
 
+    def abrir_detalhes(event):
+        idx = lista.curselection()
+        if not idx:
+            return
+        janela_detalhes(notas[idx[0]])
+
+    lista.bind("<Double-Button-1>", abrir_detalhes)
 
 def janela_remover():
     win = tk.Toplevel(janela)
@@ -84,8 +119,11 @@ def janela_remover():
 
     def remover():
         _id = entrada.get().strip()
-        if remover_nota(_id):
+        if service.remover_nota(_id):
             win.destroy()
+        else:
+            messagebox.showerror("Erro", "ID não encontrado.")
+
 
     btn = tk.Button(win, text="Remover", width=15, command=remover)
     estilizar(btn)
@@ -112,10 +150,54 @@ def janela_atualizar():
         _id = entrada_id.get().strip()
         novo = entrada_novo.get().strip()
 
-        if atualizar_nota(_id, novo):
+        if service.atualizar_nota(_id, novo):
             win.destroy()
+        else:
+            messagebox.showerror("Erro", "ID não encontrado.")
 
     btn = tk.Button(win, text="Atualizar", width=15, command=atualizar)
+    estilizar(btn)
+    btn.pack(pady=10)
+
+def janela_favoritar():
+    win = tk.Toplevel(janela)
+    win.title("Favoritar Nota")
+    win.geometry("300x180")
+    win.config(bg=cor_fundo)
+
+    tk.Label(win, text="ID da nota:", bg=cor_fundo, fg="white",
+             font=("Arial", 12)).pack(pady=10)
+
+    entrada = tk.Entry(win, width=25, font=("Arial", 12))
+    entrada.pack(pady=5)
+
+    def fav():
+        _id = entrada.get().strip()
+        if service.favoritar_nota(_id):
+            win.destroy()
+
+    btn = tk.Button(win, text="Favoritar", width=15, command=fav)
+    estilizar(btn)
+    btn.pack(pady=10)
+
+def janela_desfavoritar():
+    win = tk.Toplevel(janela)
+    win.title("Desfavoritar Nota")
+    win.geometry("300x180")
+    win.config(bg=cor_fundo)
+
+    tk.Label(win, text="ID da nota:", bg=cor_fundo, fg="white",
+             font=("Arial", 12)).pack(pady=10)
+
+    entrada = tk.Entry(win, width=25, font=("Arial", 12))
+    entrada.pack(pady=5)
+
+    def desfav():
+        _id = entrada.get().strip()
+        service.desfavoritar_nota(_id)
+        win.destroy()
+
+    btn = tk.Button(win, text="Remover Favorito", width=15, command=desfav)
     estilizar(btn)
     btn.pack(pady=10)
 
@@ -123,7 +205,7 @@ def janela_atualizar():
 
 janela = tk.Tk()
 janela.title("Sistema de notas rápidas")
-janela.geometry("400x350")
+janela.geometry("400x450")
 janela.resizable(False, False)
 
 tela_inicial = tk.Frame(janela, bg=cor_fundo)
@@ -158,5 +240,21 @@ btn_atualizar = tk.Button(tela_inicial, text="ATUALIZAR NOTA", width=20, height=
                           command=janela_atualizar)
 estilizar(btn_atualizar)
 btn_atualizar.pack(pady=5)
+
+btn_favoritar = tk.Button(
+    tela_inicial, text="FAVORITAR NOTA",
+    width=20, height=2,
+    command=janela_favoritar
+)
+estilizar(btn_favoritar)
+btn_favoritar.pack(pady=5)
+
+btn_desfavoritar = tk.Button(
+    tela_inicial, text="DESFAVORITAR NOTA",
+    width=20, height=2,
+    command=janela_desfavoritar
+)
+estilizar(btn_desfavoritar)
+btn_desfavoritar.pack(pady=5)
 
 janela.mainloop()
